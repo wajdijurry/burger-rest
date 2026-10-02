@@ -30,7 +30,17 @@ class DashboardQuery
     public function snapshot(): array
     {
         return DB::transaction(function () {
-            DB::statement('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+            // Only a genuinely top-level transaction can set its isolation
+            // level in PostgreSQL. If a caller already has one open (e.g.
+            // tests wrapping each test in a transaction via
+            // RefreshDatabase), DB::transaction() opens a nested
+            // SAVEPOINT instead, and transactionLevel() will be > 1 here -
+            // in that case the already-open transaction's isolation level
+            // governs, which is a strictly *stronger* consistency guarantee
+            // for a single test than this method is asking for anyway.
+            if (DB::transactionLevel() === 1) {
+                DB::statement('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
+            }
 
             $stock = $this->stockQuery->all();
 
