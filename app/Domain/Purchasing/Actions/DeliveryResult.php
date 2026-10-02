@@ -11,6 +11,5 @@ final class DeliveryResult
         public readonly Delivery $delivery,
         public readonly PurchaseOrder $order,
         public readonly bool $replayed,
-    ) {
-    }
+    ) {}
 }

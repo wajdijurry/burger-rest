@@ -23,9 +23,7 @@ use Illuminate\Support\Facades\DB;
  */
 class DashboardQuery
 {
-    public function __construct(private readonly StockQuery $stockQuery)
-    {
-    }
+    public function __construct(private readonly StockQuery $stockQuery) {}
 
     public function snapshot(): array
     {

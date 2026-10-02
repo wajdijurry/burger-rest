@@ -4,10 +4,13 @@ namespace Tests\Feature;
 
 use App\Domain\Catalog\Models\Ingredient;
 use App\Domain\Catalog\Models\Supplier;
+use App\Domain\Inventory\Models\StockMovement;
+use App\Domain\Purchasing\Models\Delivery;
 use App\Domain\Purchasing\Models\PurchaseOrder;
 use App\Domain\Purchasing\Models\PurchaseOrderLine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class ReceivingTest extends TestCase
@@ -28,7 +31,7 @@ class ReceivingTest extends TestCase
         $this->bun = Ingredient::create(['name' => 'Bun', 'unit' => 'piece']);
     }
 
-    private function deliver(PurchaseOrder $order, array $lines, ?string $key = null): \Illuminate\Testing\TestResponse
+    private function deliver(PurchaseOrder $order, array $lines, ?string $key = null): TestResponse
     {
         return $this->postJson(
             "/api/v1/purchase-orders/{$order->id}/deliveries",
@@ -242,7 +245,7 @@ class ReceivingTest extends TestCase
 
         $this->getJson('/api/v1/stock')
             ->assertJsonFragment(['ingredient_id' => $this->beef->id, 'quantity' => '0.000']);
-        $this->assertSame(0, \App\Domain\Purchasing\Models\Delivery::count());
+        $this->assertSame(0, Delivery::count());
     }
 
     public function test_a_controlled_failure_mid_delivery_rolls_back_every_write(): void
@@ -254,7 +257,7 @@ class ReceivingTest extends TestCase
         // Test-only fault seam: an Eloquent model event, not a production
         // endpoint, used to simulate a failure after the first line's
         // movement has been created but before the transaction commits.
-        \App\Domain\Inventory\Models\StockMovement::creating(function ($model) {
+        StockMovement::creating(function ($model) {
             if ((int) $model->ingredient_id === $this->bun->id) {
                 throw new \RuntimeException('Simulated failure for rollback test.');
             }
@@ -270,12 +273,12 @@ class ReceivingTest extends TestCase
             // whether the exception bubbled through the HTTP kernel or was
             // caught by Laravel's handler.
         } finally {
-            \App\Domain\Inventory\Models\StockMovement::flushEventListeners();
+            StockMovement::flushEventListeners();
         }
 
-        $this->assertSame(0, \App\Domain\Purchasing\Models\Delivery::count());
-        $this->assertSame(0, \App\Domain\Purchasing\Models\PurchaseOrderLine::whereHas('deliveryLines')->count());
-        $this->assertSame(0, \App\Domain\Inventory\Models\StockMovement::count());
+        $this->assertSame(0, Delivery::count());
+        $this->assertSame(0, PurchaseOrderLine::whereHas('deliveryLines')->count());
+        $this->assertSame(0, StockMovement::count());
         $order->refresh();
         $this->assertSame('sent', $order->status->value);
     }

@@ -6,6 +6,7 @@ use App\Domain\Catalog\Models\Ingredient;
 use App\Domain\Catalog\Models\Supplier;
 use App\Domain\Purchasing\Models\PurchaseOrder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PurchaseOrderTest extends TestCase
@@ -124,7 +125,7 @@ class PurchaseOrderTest extends TestCase
         $line = $order->lines()->first();
         $this->postJson("/api/v1/purchase-orders/{$order->id}/deliveries", [
             'lines' => [['purchase_order_line_id' => $line->id, 'quantity' => '40']],
-        ], ['Idempotency-Key' => (string) \Illuminate\Support\Str::uuid()])->assertCreated();
+        ], ['Idempotency-Key' => (string) Str::uuid()])->assertCreated();
 
         $this->postJson("/api/v1/purchase-orders/{$order->id}/send")
             ->assertStatus(409)
@@ -140,7 +141,7 @@ class PurchaseOrderTest extends TestCase
 
         $this->postJson("/api/v1/purchase-orders/{$order->id}/deliveries", [
             'lines' => [['purchase_order_line_id' => $line->id, 'quantity' => '40']],
-        ], ['Idempotency-Key' => (string) \Illuminate\Support\Str::uuid()])
+        ], ['Idempotency-Key' => (string) Str::uuid()])
             ->assertStatus(409)
             ->assertJsonPath('error.code', 'INVALID_ORDER_STATE');
     }
@@ -157,7 +158,7 @@ class PurchaseOrderTest extends TestCase
         $closedLine = $closedOrder->lines()->first();
         $this->postJson("/api/v1/purchase-orders/{$closedOrder->id}/deliveries", [
             'lines' => [['purchase_order_line_id' => $closedLine->id, 'quantity' => '50']],
-        ], ['Idempotency-Key' => (string) \Illuminate\Support\Str::uuid()])->assertCreated();
+        ], ['Idempotency-Key' => (string) Str::uuid()])->assertCreated();
 
         $response = $this->getJson('/api/v1/purchase-orders?status=open')->assertOk();
         $ids = array_column($response->json('data'), 'id');

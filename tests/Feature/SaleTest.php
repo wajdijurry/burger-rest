@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Domain\Catalog\Models\Ingredient;
 use App\Domain\Catalog\Models\MenuItem;
 use App\Domain\Catalog\Models\Supplier;
+use App\Domain\Inventory\Models\Sale;
 use App\Domain\Inventory\Models\StockMovement;
 use App\Domain\Purchasing\Models\PurchaseOrder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -141,7 +142,7 @@ class SaleTest extends TestCase
         $second = $this->postJson('/api/v1/sales', $payload)->assertOk();
         $this->assertTrue($second->json('replayed'));
 
-        $this->assertSame(1, \App\Domain\Inventory\Models\Sale::count());
+        $this->assertSame(1, Sale::count());
         $this->assertSame(3, StockMovement::where('type', 'sale')->count()); // 3 recipe lines, once each
     }
 
@@ -225,7 +226,7 @@ class SaleTest extends TestCase
             StockMovement::flushEventListeners();
         }
 
-        $this->assertSame(0, \App\Domain\Inventory\Models\Sale::count());
+        $this->assertSame(0, Sale::count());
         $this->assertSame(0, StockMovement::where('type', 'sale')->count());
         $this->getJson('/api/v1/stock')
             ->assertJsonFragment(['ingredient_id' => $this->beef->id, 'quantity' => '10000.000']);

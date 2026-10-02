@@ -28,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Consistent API error envelope: { "error": { code, message, fields? } }.
         // Section 7 of the brief: a stable machine-readable code, an
         // actionable message, optional field errors; never a stack trace.
-        $exceptions->render(function (\Throwable $e, Request $request) {
+        $exceptions->render(function (Throwable $e, Request $request) {
             if (! $request->is('api/*')) {
                 return null;
             }

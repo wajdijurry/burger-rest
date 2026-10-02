@@ -21,7 +21,7 @@ use Stringable;
  * know the business rule (recipe/order/delivery quantities must be positive;
  * a computed sale deduction must not be).
  */
-final class Quantity implements Stringable, \JsonSerializable
+final class Quantity implements \JsonSerializable, Stringable
 {
     public const SCALE = 3;
 
@@ -38,9 +38,7 @@ final class Quantity implements Stringable, \JsonSerializable
      * than a bare "0", no scientific notation, no whitespace. */
     private const INPUT_PATTERN = '/^-?(0|[1-9]\d*)(\.\d{1,3})?$/';
 
-    private function __construct(private readonly string $value)
-    {
-    }
+    private function __construct(private readonly string $value) {}
 
     public static function zero(): self
     {

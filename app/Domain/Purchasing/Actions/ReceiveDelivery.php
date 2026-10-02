@@ -3,7 +3,6 @@
 namespace App\Domain\Purchasing\Actions;
 
 use App\Domain\Inventory\Models\StockMovement;
-use App\Domain\Purchasing\Enums\PurchaseOrderStatus;
 use App\Domain\Purchasing\Exceptions\InvalidOrderStateException;
 use App\Domain\Purchasing\Exceptions\LineNotInOrderException;
 use App\Domain\Purchasing\Exceptions\OverReceiptException;
