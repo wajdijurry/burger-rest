@@ -8,7 +8,7 @@ import {
     sendPurchaseOrder,
     type LineInput,
 } from '@/api/resources';
-import { errorMessage, fieldErrors } from '@/lib/errors';
+import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
 import type { Ingredient, PurchaseOrder, Supplier } from '@/types';
 
 const orders = ref<PurchaseOrder[]>([]);
@@ -69,8 +69,8 @@ async function submit() {
         resetForm();
         await load();
     } catch (e) {
-        submitError.value = errorMessage(e);
         fieldErrs.value = fieldErrors(e);
+        submitError.value = generalErrorMessage(e);
     } finally {
         submitting.value = false;
     }

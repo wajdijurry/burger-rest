@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { createMenuItem, listIngredients, listMenuItems, type LineInput } from '@/api/resources';
-import { errorMessage, fieldErrors } from '@/lib/errors';
+import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
 import type { Ingredient, MenuItem } from '@/types';
 
 const menuItems = ref<MenuItem[]>([]);
@@ -53,8 +53,8 @@ async function submit() {
         menuItems.value = [...menuItems.value, created].sort((a, b) => a.name.localeCompare(b.name));
         resetForm();
     } catch (e) {
-        submitError.value = errorMessage(e);
         fieldErrs.value = fieldErrors(e);
+        submitError.value = generalErrorMessage(e);
     } finally {
         submitting.value = false;
     }

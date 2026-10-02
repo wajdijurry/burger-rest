@@ -3,7 +3,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { getPurchaseOrder, receiveDelivery, sendPurchaseOrder } from '@/api/resources';
 import { usePolling } from '@/composables/usePolling';
 import { useIdempotencyKey } from '@/composables/useIdempotencyKey';
-import { errorMessage, fieldErrors } from '@/lib/errors';
+import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
 import FreshnessBar from '@/components/FreshnessBar.vue';
 import type { PurchaseOrder } from '@/types';
 
@@ -74,8 +74,8 @@ async function submitDelivery() {
         rotateKey(); // this submission succeeded; the next click is a new one
         await refresh();
     } catch (e) {
-        receiveError.value = errorMessage(e);
         receiveFieldErrors.value = fieldErrors(e);
+        receiveError.value = generalErrorMessage(e);
         // Deliberately do NOT rotate the key here: a retry of this exact
         // click should reuse the same Idempotency-Key.
     } finally {

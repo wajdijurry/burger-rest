@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue';
 import { listMenuItems, recordSale } from '@/api/resources';
 import { useIdempotencyKey } from '@/composables/useIdempotencyKey';
-import { errorMessage, fieldErrors } from '@/lib/errors';
+import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
 import type { MenuItem } from '@/types';
 
 const menuItems = ref<MenuItem[]>([]);
@@ -48,8 +48,8 @@ async function submit() {
         };
         rotateKey(); // success: next click (even with the same inputs) is a new sale
     } catch (e) {
-        submitError.value = errorMessage(e);
         fieldErrs.value = fieldErrors(e);
+        submitError.value = generalErrorMessage(e);
         // Keep the current key: a retry of this exact failed click must
         // stay idempotent with itself.
     } finally {

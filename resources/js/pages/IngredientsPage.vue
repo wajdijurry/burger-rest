@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { createIngredient, listIngredients } from '@/api/resources';
-import { errorMessage, fieldErrors } from '@/lib/errors';
+import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
 import type { Ingredient } from '@/types';
 
 const ingredients = ref<Ingredient[]>([]);
@@ -37,8 +37,8 @@ async function submit() {
         name.value = '';
         unit.value = '';
     } catch (e) {
-        submitError.value = errorMessage(e);
         fieldErrs.value = fieldErrors(e);
+        submitError.value = generalErrorMessage(e);
     } finally {
         submitting.value = false;
     }

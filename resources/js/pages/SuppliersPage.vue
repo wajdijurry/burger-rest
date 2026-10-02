@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { createSupplier, listSuppliers } from '@/api/resources';
-import { errorMessage, fieldErrors } from '@/lib/errors';
+import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
 import type { Supplier } from '@/types';
 
 const suppliers = ref<Supplier[]>([]);
@@ -35,8 +35,8 @@ async function submit() {
         suppliers.value = [...suppliers.value, created].sort((a, b) => a.name.localeCompare(b.name));
         name.value = '';
     } catch (e) {
-        submitError.value = errorMessage(e);
         fieldErrs.value = fieldErrors(e);
+        submitError.value = generalErrorMessage(e);
     } finally {
         submitting.value = false;
     }
