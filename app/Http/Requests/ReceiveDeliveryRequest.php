@@ -22,4 +22,23 @@ class ReceiveDeliveryRequest extends FormRequest
             'lines.*.quantity' => ['required', 'string', 'max:20'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'lines' => 'delivery lines',
+            'lines.*.purchase_order_line_id' => 'order line',
+            'lines.*.quantity' => 'quantity',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'lines.required' => 'Add at least one delivery line.',
+            'lines.min' => 'Add at least one delivery line.',
+            'lines.*.purchase_order_line_id.required' => 'Each delivery line must reference an order line.',
+            'lines.*.quantity.required' => 'Enter a received quantity for each line.',
+        ];
+    }
 }

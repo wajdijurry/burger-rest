@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue';
 import { createMenuItem, listIngredients, listMenuItems, type LineInput } from '@/api/resources';
-import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
+import { errorMessage, fieldErrors, formatFieldLabel, generalErrorMessage } from '@/lib/errors';
 import type { Ingredient, MenuItem } from '@/types';
 
 const menuItems = ref<MenuItem[]>([]);
@@ -119,7 +119,7 @@ onMounted(load);
             </p>
             <p v-if="submitError" role="alert" class="text-sm text-red-600">{{ submitError }}</p>
             <p v-for="(msgs, field) in fieldErrs" :key="field" class="text-xs text-red-500">
-                {{ field }}: {{ msgs.join(', ') }}
+                {{ formatFieldLabel(field) }}: {{ msgs.join(', ') }}
             </p>
         </form>
 

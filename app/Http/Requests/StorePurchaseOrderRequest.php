@@ -20,4 +20,27 @@ class StorePurchaseOrderRequest extends FormRequest
             'lines.*.quantity' => ['required', 'string', 'max:20'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'supplier_id' => 'supplier',
+            'lines' => 'order lines',
+            'lines.*.ingredient_id' => 'ingredient',
+            'lines.*.quantity' => 'quantity',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'supplier_id.required' => 'Please select a supplier.',
+            'supplier_id.exists' => 'Please select a valid supplier.',
+            'lines.required' => 'Add at least one ingredient line.',
+            'lines.min' => 'Add at least one ingredient line.',
+            'lines.*.ingredient_id.required' => 'Please select an ingredient.',
+            'lines.*.ingredient_id.exists' => 'Please select a valid ingredient.',
+            'lines.*.quantity.required' => 'Enter a quantity for each line.',
+        ];
+    }
 }

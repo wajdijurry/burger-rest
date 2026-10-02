@@ -23,4 +23,24 @@ class StoreMenuItemRequest extends FormRequest
             'lines.*.quantity' => ['required', 'string', 'max:20'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'lines' => 'recipe lines',
+            'lines.*.ingredient_id' => 'ingredient',
+            'lines.*.quantity' => 'quantity',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'lines.required' => 'Add at least one recipe line.',
+            'lines.min' => 'Add at least one recipe line.',
+            'lines.*.ingredient_id.required' => 'Please select an ingredient.',
+            'lines.*.ingredient_id.exists' => 'Please select a valid ingredient.',
+            'lines.*.quantity.required' => 'Enter a quantity for each recipe line.',
+        ];
+    }
 }

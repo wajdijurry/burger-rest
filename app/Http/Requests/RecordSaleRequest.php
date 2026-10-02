@@ -20,4 +20,22 @@ class RecordSaleRequest extends FormRequest
             'quantity' => ['required', 'integer', 'min:1', 'max:10000'],
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'event_id' => 'sale event',
+            'menu_item_id' => 'menu item',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'menu_item_id.required' => 'Please select a menu item.',
+            'menu_item_id.exists' => 'Please select a valid menu item.',
+            'quantity.min' => 'Sale quantity must be at least 1.',
+            'quantity.max' => 'Sale quantity may not exceed 10,000.',
+        ];
+    }
 }

@@ -2,7 +2,7 @@
 import { onMounted, ref, watch } from 'vue';
 import { listMenuItems, recordSale } from '@/api/resources';
 import { useIdempotencyKey } from '@/composables/useIdempotencyKey';
-import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
+import { errorMessage, fieldErrors, formatFieldLabel, generalErrorMessage } from '@/lib/errors';
 import type { MenuItem } from '@/types';
 
 const menuItems = ref<MenuItem[]>([]);
@@ -105,7 +105,7 @@ onMounted(load);
             <p v-if="menuItems.length === 0" class="text-xs text-slate-400">No menu items yet — create one first.</p>
             <p v-if="submitError" role="alert" class="text-sm text-red-600">{{ submitError }}</p>
             <p v-for="(msgs, field) in fieldErrs" :key="field" class="text-xs text-red-500">
-                {{ field }}: {{ msgs.join(', ') }}
+                {{ formatFieldLabel(field) }}: {{ msgs.join(', ') }}
             </p>
             <p v-if="lastResult" class="text-sm text-emerald-700">
                 Sold {{ lastResult.quantity }} × {{ lastResult.itemName }}.

@@ -3,7 +3,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { getPurchaseOrder, receiveDelivery, sendPurchaseOrder } from '@/api/resources';
 import { usePolling } from '@/composables/usePolling';
 import { useIdempotencyKey } from '@/composables/useIdempotencyKey';
-import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
+import { errorMessage, fieldErrors, formatFieldLabel, generalErrorMessage } from '@/lib/errors';
 import FreshnessBar from '@/components/FreshnessBar.vue';
 import type { PurchaseOrder } from '@/types';
 
@@ -188,7 +188,7 @@ async function submitDelivery() {
                     </button>
                     <p v-if="receiveError" role="alert" class="text-sm text-red-600">{{ receiveError }}</p>
                     <p v-for="(msgs, field) in receiveFieldErrors" :key="field" class="text-xs text-red-500">
-                        {{ field }}: {{ msgs.join(', ') }}
+                        {{ formatFieldLabel(field) }}: {{ msgs.join(', ') }}
                     </p>
                     <p v-if="lastResult === 'replayed'" class="text-xs text-slate-400">
                         That delivery was already recorded — this click was recognised as a safe retry (idempotent

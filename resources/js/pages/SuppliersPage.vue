@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { createSupplier, listSuppliers } from '@/api/resources';
-import { errorMessage, fieldErrors, generalErrorMessage } from '@/lib/errors';
+import { errorMessage, fieldErrors, formatFieldLabel, generalErrorMessage } from '@/lib/errors';
 import type { Supplier } from '@/types';
 
 const suppliers = ref<Supplier[]>([]);
@@ -70,7 +70,7 @@ onMounted(load);
             </button>
             <p v-if="submitError" role="alert" class="w-full text-sm text-red-600">{{ submitError }}</p>
             <p v-for="(msgs, field) in fieldErrs" :key="field" class="w-full text-xs text-red-500">
-                {{ field }}: {{ msgs.join(', ') }}
+                {{ formatFieldLabel(field) }}: {{ msgs.join(', ') }}
             </p>
         </form>
 
