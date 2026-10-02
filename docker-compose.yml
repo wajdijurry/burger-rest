@@ -48,9 +48,11 @@ services:
       - .:/var/www/html
     ports:
       - "${APP_PORT:-8000}:8000"
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
+    # No DB_HOST/DB_PORT override here on purpose: those come from .env /
+    # .env.testing. An env var set at the container level would win over
+    # *every* later source (dotenv, phpunit.xml <env> without force="true"),
+    # which previously caused the "testing" DB connection to silently point
+    # back at the dev Postgres container.
     depends_on:
       postgres:
         condition: service_healthy
