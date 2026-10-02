@@ -1,0 +1,61 @@
+name: foodics-task
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-foodics}
+      POSTGRES_USER: ${DB_USERNAME:-foodics}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-foodics}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-foodics} -d ${DB_DATABASE:-foodics}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  # Dedicated database for the real-Postgres test suite, kept separate from the
+  # dev database so running tests never touches demo/seed data.
+  postgres_test:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: foodics_test
+      POSTGRES_USER: ${DB_USERNAME:-foodics}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-foodics}
+    ports:
+      - "${DB_TEST_PORT:-5433}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-foodics} -d foodics_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "${HOST_UID:-1001}:${HOST_GID:-1001}"
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+      postgres_test:
+        condition: service_healthy
+
+volumes:
+  pgdata:
