@@ -2,8 +2,7 @@
 
 A single-restaurant inventory and purchasing system: ingredients, suppliers,
 menu-item recipes, purchase orders with partial/idempotent receiving, and
-POS sale events that deduct stock by recipe. Built for Foodics' Engineering
-Manager (ERP) build challenge.
+POS sale events that deduct stock by recipe.
 
 ## 1. Purpose and implemented scope
 
